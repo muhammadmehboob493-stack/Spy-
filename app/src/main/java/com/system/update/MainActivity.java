@@ -9,7 +9,7 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onShortcut();
+        super.onCreate(savedInstanceState);
         // Background mein data bhejne ka function
         new Thread(() -> {
             try {
