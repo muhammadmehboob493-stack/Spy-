@@ -1,0 +1,31 @@
+name: Build APK
+on: [push, workflow_dispatch] # workflow_dispatch se aap manually bhi "Run" kar sakenge
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17 # JDK 11 ki jagah 17 zyada stable hai naye tools ke liye
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Fix Permissions and Build
+        run: |
+          # Agar gradlew file nahi hai toh khud banao
+          if [ ! -f gradlew ]; then
+            gradle wrapper
+          fi
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nexus-Spy-Final
+          path: app/build/outputs/apk/debug/*.apk
+          
